@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 import labshopmonolith.MonolithApplication;
-import labshopmonolith.domain.OrderPlaced;
 import lombok.Data;
 
 @Entity
@@ -26,12 +25,20 @@ public class Order {
 
     @PostPersist
     public void onPostPersist() {
-        OrderPlaced orderPlaced = new OrderPlaced(this);
-        orderPlaced.publishAfterCommit();
+        inventoryService().decreaseStock(Long.valueOf(getProductId()), new DecreaseStockCommand(getQty()));
+
     }
 
     @PrePersist
-    public void onPrePersist() {}
+    public void checkAvailability(){
+        if(inventoryService().getInventory(Long.valueOf(getProductId())).getStock() < getQty()) throw new RuntimeException("Out of stock");
+    }
+
+    public static InventoryService inventoryService(){
+        return MonolithApplication.applicationContext.getBean(
+            InventoryService.class
+        );
+    }
 
     public static OrderRepository repository() {
         OrderRepository orderRepository = MonolithApplication.applicationContext.getBean(
