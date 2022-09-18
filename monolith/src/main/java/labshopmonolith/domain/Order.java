@@ -35,9 +35,11 @@ public class Order {
     }
 
     public static InventoryService inventoryService(){
-        return MonolithApplication.applicationContext.getBean(
+        InventoryService inventoryService = MonolithApplication.applicationContext.getBean(
             InventoryService.class
         );
+
+        return inventoryService;
     }
 
     public static OrderRepository repository() {
