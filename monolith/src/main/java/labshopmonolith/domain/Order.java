@@ -25,7 +25,7 @@ public class Order {
 
     private Double amount;
 
-    private String address;
+    //private String address;
 
     @PostPersist // Pre|Post + Persist|Remove|Load|Update --> PreUpdate PostUpdate PostRemove
     public void onPostPersist() {
