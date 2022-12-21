@@ -3,7 +3,7 @@
 ## Running in local development environment
 
 ```
-mvn spring-boot:run
+mvn spring-boot:run # <----
 ```
 
 ## Packaging and Running in docker environment

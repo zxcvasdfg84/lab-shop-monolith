@@ -3,6 +3,8 @@ package labshopmonolith.domain;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
+import javax.transaction.Transactional;
+
 import labshopmonolith.MonolithApplication;
 import lombok.Data;
 
@@ -23,15 +25,20 @@ public class Order {
 
     private Double amount;
 
-    @PostPersist
-    public void onPostPersist() {
-        inventoryService().decreaseStock(Long.valueOf(getProductId()), new DecreaseStockCommand(getQty()));
+    private String address;
 
+    @PostPersist // Pre|Post + Persist|Remove|Load|Update --> PreUpdate PostUpdate PostRemove
+    public void onPostPersist() {
+        System.out.println("Saved");
     }
 
     @PrePersist
     public void checkAvailability(){
-        if(inventoryService().getInventory(Long.valueOf(getProductId())).getStock() < getQty()) throw new RuntimeException("Out of stock");
+        if(inventoryService().getInventory(Long.valueOf(getProductId())).getStock() < getQty()) 
+            throw new RuntimeException("Out of stock");
+
+        inventoryService().decreaseStock(Long.valueOf(getProductId()), new DecreaseStockCommand(getQty()));
+
     }
 
     public static InventoryService inventoryService(){
